@@ -1,76 +1,111 @@
-# Swap-Circle-backend
-Swap Circle is an open-source application for lending objects between individuals built with NestJS
+# Swap Circle (Partie Backend)
 
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+  <img src="docs/assets/swap-circle-logo.png" width="180" alt="Logo Swap Circle" />
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Swap Circle est une application React Native/Expo permettant le prêt d'objets entre voisins, amis ou autres, avec un système de caution assurant la protection légale des échanges.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Ce dépôt contient le backend NestJS de l'application. Il expose l'API utilisée par l'application mobile pour gérer les utilisateurs, les objets, les demandes de prêt, les cautions, la messagerie, les notifications push et les fichiers associés aux annonces.
 
-## Description
+![Aperçu de l'application Swap Circle](docs/assets/swap-circle-screenshot.png)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Fonctionnalités principales
+
+- Gestion des comptes, authentification JWT et rôles.
+- Publication et consultation d'objets disponibles au prêt.
+- Demandes de prêt, suivi des emprunts et réceptions.
+- Caution et paiements via Stripe.
+- Conversations et messages entre utilisateurs.
+- Upload de fichiers vers S3 et diffusion via CloudFront.
+- Notifications push Expo.
+
+## Prérequis
+
+- Node.js 20 ou version compatible avec NestJS 10.
+- npm.
+- Une base de données MySQL.
+- Des clés AWS S3/CloudFront si l'upload de fichiers est utilisé.
+- Une clé secrète Stripe si le module de caution/paiement est utilisé.
 
 ## Installation
 
-```bash
-$ npm install
-```
-
-## Running the app
+Installe les dépendances du backend :
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Test
+Crée ensuite le fichier d'environnement local :
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp .env.example .env
 ```
 
-## Support
+Renseigne les variables nécessaires dans `.env` :
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```env
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=password
+DB_NAME=swap_circle
+DB_PORT=3306
 
-## Stay in touch
+AWS_ACCESS_KEY=...
+AWS_SECRET_KEY=...
+BUCKET_NAME=...
+BUCKET_ITEM_PICTURES_DIRECTORY_NAME=...
+BUCKET_PFP_DIRECTORY_NAME=...
+URL_CLOUDFRONT=...
+YOUR_STRIPE_SECRET_KEY=...
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+JWT_SECRET_KEY=...
+```
 
-## License
+## Lancer l'application
 
-Nest is [MIT licensed](LICENSE).
+Lance le backend en mode développement :
+
+```bash
+npm run start:dev
+```
+
+L'API démarre sur :
+
+```text
+http://localhost:3000
+```
+
+La documentation Swagger est disponible sur :
+
+```text
+http://localhost:3000/gpe
+```
+
+Pour lancer l'application en mode production :
+
+```bash
+npm run build
+npm run start:prod
+```
+
+## Structure du projet
+
+```text
+src/
+  auth/                 Authentification et autorisation
+  file/                 Upload et gestion des fichiers
+  friend/               Relations entre utilisateurs
+  item/                 Objets disponibles au prêt
+  loan/                 Prêts et emprunts
+  loan-request/         Demandes de prêt
+  message/              Messages
+  payment/              Paiements et cautions
+  push-notification/    Notifications push Expo
+  thread/               Conversations
+  user/                 Utilisateurs
+```
+
+## Licence
+
+Ce projet est distribué sous licence GPL-3.0. Consulte le fichier [LICENSE](LICENSE) pour plus d'informations.
